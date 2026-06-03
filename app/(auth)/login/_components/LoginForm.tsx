@@ -10,15 +10,18 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader } from "lucide-react";
+import { Loader, Loader2, Send } from "lucide-react";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
-
+  const router = useRouter()
   const [githubPending, startGithubTransition] = useTransition()
+  const [emailPending, startEmailTransition] = useTransition()
+  const [email, setEmail] = useState("")
 
   async function signInWithGitHub() {
     startGithubTransition(async () => {
@@ -35,6 +38,27 @@ export default function LoginForm() {
         }
       })
     })
+  }
+
+  function signInWithEmail() {
+    startEmailTransition(async () => {
+      await authClient.emailOtp.sendVerificationOtp({
+        email: email,
+        type: 'sign-in',
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success('Email Sent')
+            router.push(`/verify-request?email=${email}`)
+          },
+          onError: () => {
+            toast.error("Error Sending Email")
+          }
+        }
+
+      })
+
+    })
+
   }
 
   return (
@@ -74,9 +98,25 @@ export default function LoginForm() {
         <div className="grid gap-3">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input type="email" placeholder="yourEmail@example.com" />
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="yourEmail@example.com" />
           </div>
-          <Button>Continue with email</Button>
+          <Button onClick={signInWithEmail} disabled={emailPending}>
+            {emailPending ? (
+              <>
+                <Loader2 className="size-4 animage-spin" />
+              </>
+            ) : (
+              <>
+                <Send className="size-4" />
+                <span>Continue with email</span>
+              </>
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
