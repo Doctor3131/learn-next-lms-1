@@ -45,15 +45,17 @@ bunx --bun shadcn@latest add <component>
 |------|---------|
 | `lib/env.ts` | Validated env vars — all env access goes through this |
 | `lib/db.ts` | Prisma singleton |
-| `lib/auth.ts` | Server-side better-auth instance (GitHub OAuth) |
-| `lib/auth-client.ts` | Client-side better-auth instance |
-| `app/api/auth/[...all]/route.ts` | better-auth Next.js handler |
+| `lib/auth.ts` | Server-side better-auth instance (GitHub OAuth + Email OTP plugin) |
+| `lib/auth-client.ts` | Client-side better-auth instance (`emailOTPClient` plugin) |
+| `lib/resend.ts` | Resend client — used by `auth.ts` to send OTP emails |
+| `lib/arcjet.ts` | Arcjet singleton (base `shield` rule) for auth-route protection |
+| `app/api/auth/[...all]/route.ts` | better-auth handler; POST is wrapped with Arcjet (bot/rate-limit/email rules) |
 | `prisma.config.ts` | Prisma config (schema path, migrations path, datasource) |
 
 ### Route structure
 
 - `app/` — root layout wraps all routes with `ThemeProvider` and `Toaster`
-- `app/(auth)/` — auth route group (login page); has its own centered layout
+- `app/(auth)/` — auth route group with its own centered layout; holds the `login` page and the `verify-request` page (OTP entry, receives `?email=` from the login flow)
 - `app/api/auth/[...all]/` — better-auth catch-all API route
 
 Co-located components live in `_components/` subdirectories alongside their page (e.g. `app/(auth)/login/_components/LoginForm.tsx`).
@@ -62,7 +64,8 @@ Co-located components live in `_components/` subdirectories alongside their page
 
 - **Server Components / Route Handlers**: use `auth.api.getSession({ headers: await headers() })` from `@/lib/auth`; redirect unauthenticated users with `redirect()`
 - **Client Components**: use `authClient.useSession()` or `authClient.signIn.*` / `authClient.signOut()` from `@/lib/auth-client`
-- Only GitHub OAuth is wired up; the email input in `LoginForm` is a placeholder with no backend handler yet
+- Two sign-in methods are wired up: **GitHub OAuth** (`authClient.signIn.social`) and **Email OTP** (`authClient.emailOtp.sendVerificationOtp({ email, type: "sign-in" })` → redirect to `/verify-request` → verify). There is no email+password (`emailAndPassword`) flow, so no `/api/auth/sign-up/*` endpoints exist; the live POST endpoints are `/api/auth/email-otp/send-verification-otp`, `/api/auth/sign-in/email-otp`, and `/api/auth/sign-in/social`
+- OTP emails are sent from `sendVerificationOTP` in `lib/auth.ts` via the Resend client
 
 ### Environment variables
 
@@ -74,6 +77,8 @@ BETTER_AUTH_SECRET
 BETTER_AUTH_URL
 AUTH_GITHUB_CLIENT_ID
 AUTH_GITHUB_SECRET
+RESEND_API_KEY
+ARCJET_KEY
 ```
 
 ### Prisma notes
