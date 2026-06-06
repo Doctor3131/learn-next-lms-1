@@ -46,34 +46,34 @@ File yang **ditambahkan** atau **diubah** dalam implementasi ini:
 
 ```mermaid
 flowchart TD
-    A([User isi email lalu klik 'Continue with email']) --> B[signInWithEmail\nauthClient.emailOtp.sendVerificationOtp]
+    A(["User isi email lalu klik 'Continue with email'"]) --> B["signInWithEmail\nauthClient.emailOtp.sendVerificationOtp"]
     B --> C[Request ke /api/auth/email-otp/send-verification-otp]
-    C --> D[better-auth generate OTP 6-digit\nsimpan ke tabel verification di DB]
-    D --> E[Panggil sendVerificationOTP callback\ndi auth.ts]
-    E --> F[resend.emails.send\nkirim email dengan kode OTP]
-    F --> G{Email berhasil dikirim?}
-    G -- Ya --> H[onSuccess callback\ntoast.success]
-    H --> I[router.push /verify-request?email=...]
-    G -- Tidak --> J[onError callback\ntoast.error]
+    C --> D["better-auth generate OTP 6-digit\nsimpan ke tabel verification di DB"]
+    D --> E["Panggil sendVerificationOTP callback\ndi auth.ts"]
+    E --> F["resend.emails.send\nkirim email dengan kode OTP"]
+    F --> G{"Email berhasil dikirim?"}
+    G -- Ya --> H["onSuccess callback\ntoast.success"]
+    H --> I["router.push /verify-request?email=..."]
+    G -- Tidak --> J["onError callback\ntoast.error"]
 ```
 
 ### 3.2 Alur Verifikasi OTP
 
 ```mermaid
 flowchart TD
-    A([User buka /verify-request?email=...]) --> B[Baca email dari query param\nuseSearchParams]
-    B --> C[User input kode OTP 6-digit\nInputOTP component]
-    C --> D{OTP 6 digit sudah terisi?}
+    A(["User buka /verify-request?email=..."]) --> B["Baca email dari query param\nuseSearchParams"]
+    B --> C["User input kode OTP 6-digit\nInputOTP component"]
+    C --> D{"OTP 6 digit sudah terisi?"}
     D -- Belum --> C
-    D -- Ya --> E[User klik 'Verify Account']
-    E --> F[verifyOtp\nauthClient.signIn.emailOtp]
+    D -- Ya --> E["User klik 'Verify Account'"]
+    E --> F["verifyOtp\nauthClient.signIn.emailOtp"]
     F --> G[Request ke /api/auth/sign-in/email-otp]
-    G --> H{OTP valid & belum expired?}
-    H -- Tidak --> I[onError callback\ntoast.error]
-    H -- Ya --> J[better-auth buat Session di DB\nset email verified = true]
-    J --> K[onSuccess callback\ntoast.success]
+    G --> H{"OTP valid dan belum expired?"}
+    H -- Tidak --> I["onError callback\ntoast.error"]
+    H -- Ya --> J["better-auth buat Session di DB\nset email verified = true"]
+    J --> K["onSuccess callback\ntoast.success"]
     K --> L[router.push /]
-    L --> M([Halaman utama\nsession aktif])
+    L --> M(["Halaman utama\nsession aktif"])
 ```
 
 ---

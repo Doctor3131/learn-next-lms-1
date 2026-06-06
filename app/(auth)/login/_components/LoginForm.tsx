@@ -108,7 +108,7 @@ export default function LoginForm() {
           <Button onClick={signInWithEmail} disabled={emailPending}>
             {emailPending ? (
               <>
-                <Loader2 className="size-4 animage-spin" />
+                <Loader2 className="size-4 animate-spin" />
               </>
             ) : (
               <>

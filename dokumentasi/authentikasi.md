@@ -1,4 +1,3 @@
-# Dokumentasi Autentikasi
 
 Dokumen ini menjelaskan sistem autentikasi yang digunakan pada proyek ini, mulai dari dependensi, struktur file, alur kode, hingga penjelasan tiap bagian kode secara detail.
 
@@ -54,24 +53,24 @@ Berikut paket-paket yang terlibat langsung dalam sistem autentikasi:
 
 ```mermaid
 flowchart TD
-    A([User klik 'Sign in with GitHub']) --> B[authClient.signIn.social\nprovider: 'github']
+    A(["User klik 'Sign in with GitHub'"]) --> B["authClient.signIn.social\nprovider: 'github'"]
     B --> C[Redirect ke GitHub OAuth]
-    C --> D{User setujui izin\ndi GitHub?}
+    C --> D{"User setujui izin\ndi GitHub?"}
     D -- Tidak --> E([Kembali ke halaman login])
-    D -- Ya --> F[GitHub redirect ke\n/api/auth/...all]
-    F --> G[better-auth proses callback\nbuat/update User + Account + Session di DB]
-    G --> H[Redirect ke callbackURL '/']
-    H --> I[authClient.useSession\nreaktif — tampilkan data user]
+    D -- Ya --> F["GitHub redirect ke\n/api/auth/...all"]
+    F --> G["better-auth proses callback\nbuat/update User + Account + Session di DB"]
+    G --> H["Redirect ke callbackURL '/'"]
+    H --> I["authClient.useSession\nreaktif — tampilkan data user"]
 ```
 
 ### 3.2 Alur Cek Session di Server Component
 
 ```mermaid
 flowchart TD
-    A([User akses /login]) --> B[LoginPage\nServer Component]
-    B --> C[auth.api.getSession\nheaders dari request]
+    A([User akses /login]) --> B["LoginPage\nServer Component"]
+    B --> C["auth.api.getSession\nheaders dari request"]
     C --> D{Session ada?}
-    D -- Ya --> E[redirect '/']
+    D -- Ya --> E["redirect '/'"]
     D -- Tidak --> F[Render LoginForm]
 ```
 
@@ -79,11 +78,11 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([User klik 'Logout']) --> B[authClient.signOut]
+    A(["User klik 'Logout'"]) --> B[authClient.signOut]
     B --> C[better-auth hapus session dari DB]
     C --> D[onSuccess callback]
-    D --> E[router.push '/']
-    E --> F([Halaman ter-refresh\nsession kosong])
+    D --> E["router.push '/'"]
+    E --> F(["Halaman ter-refresh\nsession kosong"])
 ```
 
 ---
