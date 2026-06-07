@@ -30,6 +30,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <script
+        async
+        crossOrigin="anonymous"
+        src="https://tweakcn.com/live-preview.min.js"
+      />
       <body className="min-h-full flex flex-col ">
         <ThemeProvider
           attribute="class"
