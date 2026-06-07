@@ -1,13 +1,9 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface featureProps {
   title: string;
@@ -39,8 +35,6 @@ const features: featureProps[] = [
 ]
 
 export default function Home() {
-  const router = useRouter()
-  const { data: session } = authClient.useSession()
 
   return (
     <>
@@ -68,13 +62,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-42">
         {features.map((feature, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
+          <Card key={index} className="hover:shadow-lg transition-shadow text-center">
             <CardHeader>
-              <div className="text-4xl mb-4">
-                {feature.icon}
-              </div>
+              {/* <div className="text-4xl mb-4"> */}
+              {/*   {feature.icon} */}
+              {/* </div> */}
               <CardTitle>
                 {feature.title}
               </CardTitle>

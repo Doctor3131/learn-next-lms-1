@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +31,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <script
-        async
-        crossOrigin="anonymous"
-        src="https://tweakcn.com/live-preview.min.js"
-      />
+      {/* <script */}
+      {/*   async */}
+      {/*   crossOrigin="anonymous" */}
+      {/*   src="https://tweakcn.com/live-preview.min.js" */}
+      {/* /> */}
       <body className="min-h-full flex flex-col ">
         <ThemeProvider
           attribute="class"
@@ -42,10 +43,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
+
